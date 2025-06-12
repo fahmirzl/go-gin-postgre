@@ -2,35 +2,61 @@ package database
 
 import (
 	"database/sql"
+	"embed"
 	"fmt"
-	_ "github.com/lib/pq"
-)
+	"os"
 
-const (
-	host		= "localhost"
-	port		= 5432
-	user		= "postgres"
-	password	= "root"
-	dbname		= "go-sql"
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+	migrate "github.com/rubenv/sql-migrate"
 )
 
 var (
-	db		*sql.DB
+	DB		*sql.DB
 	err		error
 )
 
+//go:embed migrations/*.sql
+var dbMigrations embed.FS
+
 func GetConnection() (*sql.DB, error) {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s " + "password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err = sql.Open("postgres", psqlInfo)
+	err = godotenv.Load("config/.env")
+    if err != nil {
+       panic("Error loading .env file")
+    }
+
+    psqlInfo := fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`,
+       os.Getenv("DB_HOST"),
+       os.Getenv("DB_PORT"),
+       os.Getenv("DB_USER"),
+       os.Getenv("DB_PASSWORD"),
+       os.Getenv("DB_NAME"),
+    )
+
+	DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.Ping()
+	err = DB.Ping()
 	if err != nil {
 		panic(err)
 	}
 
 	fmt.Println("Koneksi database sukses ...")
-	return db, err
+	return DB, err
+}
+
+func DBMigrate(dbParam *sql.DB) {
+	migrations := &migrate.EmbedFileSystemMigrationSource{
+       FileSystem: dbMigrations,
+       Root:       "migrations",
+    }
+
+	n, errs := migrate.Exec(dbParam, "postgres", migrations, migrate.Up)
+    if errs != nil {
+       panic(errs)
+    }
+
+	fmt.Println("Migration success, applied", n, "migrations!")
 }
