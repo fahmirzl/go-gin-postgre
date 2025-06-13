@@ -35,6 +35,7 @@ func GetConnection() (*sql.DB, error) {
 
 	DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
+		fmt.Println(err.Error())
 		panic(err)
 	}
 

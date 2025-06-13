@@ -8,7 +8,6 @@ import (
 
 func StartServer() *gin.Engine {
 	router := gin.Default()
-	gin.SetMode(gin.ReleaseMode)
 
 	router.POST("/bioskop", controllers.CreateBioskop)
 	router.GET("/bioskop", controllers.GetAllBioskop)
