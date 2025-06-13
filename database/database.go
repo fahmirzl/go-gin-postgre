@@ -25,16 +25,11 @@ func GetConnection() (*sql.DB, error) {
        panic("Error loading .env file")
     }
 
-    psqlInfo := fmt.Sprintf(`host=%s port=%s user=%s password=%s dbname=%s sslmode=disable`,
-       os.Getenv("PGHOST"),
-       os.Getenv("PGPORT"),
-       os.Getenv("PGUSER"),
-       os.Getenv("PGPASSWORD"),
-       os.Getenv("PGDATABASE"),
-    )
+    psqlInfo := os.Getenv("DATABASE_URL")
 
 	DB, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
+		fmt.Println(err.Error())
 		panic(err)
 	}
 
