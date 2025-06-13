@@ -7,6 +7,6 @@ import (
 )
 
 func main() {
-	database.DBMigrate(database.DB)
+	// database.DBMigrate(database.DB)
 	routers.StartServer().Run(":" + os.Getenv("PORT"))
 }
