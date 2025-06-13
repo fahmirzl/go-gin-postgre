@@ -8,5 +8,5 @@ import (
 
 func main() {
 	database.DBMigrate(database.DB)
-	routers.StartServer().Run(":8080"))
+	routers.StartServer().Run(":8080")
 }
