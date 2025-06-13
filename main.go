@@ -8,9 +8,5 @@ import (
 
 func main() {
 	database.DBMigrate(database.DB)
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	routers.StartServer().Run(":" + port)
+	routers.StartServer().Run(":" + os.Getenv("PORT"))
 }
