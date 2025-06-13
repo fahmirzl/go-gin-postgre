@@ -3,7 +3,6 @@ package main
 import (
 	"go-gin-postgre/database"
 	"go-gin-postgre/routers"
-	"os"
 )
 
 func main() {
